@@ -503,7 +503,11 @@ class BelongsToMany extends Relation
                     ->exists(false)
                     ->data([])
                     ->save($pivot);
-                $result[] = $this->newPivot($pivot);
+
+                $result[] = $this->pivot->newInstance($pivot, [
+                    [$this->localKey, '=', $this->parent->getKey(), null],
+                    [$this->foreignKey, '=', $id, null],
+                ]);
             }
 
             if (count($result) == 1) {
