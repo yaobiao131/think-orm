@@ -543,6 +543,34 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
     }
 
     /**
+     * 字段值增长
+     *
+     * @param string $field 字段名
+     * @param float  $step  增长值
+     *
+     * @return $this
+     */
+    public function inc(string $field, float $step = 1)
+    {
+        $this->setAttr($field, ['INC', $step]);
+        return $this;
+    }
+
+    /**
+     * 字段值减少.
+     *
+     * @param string $field 字段名
+     * @param float  $step  增长值
+     *
+     * @return $this
+     */
+    public function dec(string $field, float $step = 1)
+    {
+        $this->setAttr($field, ['DEC', $step]);
+        return $this;
+    }
+
+    /**
      * 保存当前数据对象
      *
      * @param array|object  $data     数据
