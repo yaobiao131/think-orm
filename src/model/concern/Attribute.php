@@ -34,6 +34,13 @@ trait Attribute
     protected $pk = 'id';
 
     /**
+     * 数据表主键自增.
+     *
+     * @var bool|null|string
+     */
+    protected $autoInc;
+
+    /**
      * 数据表字段信息 留空则自动获取.
      *
      * @var array

@@ -389,6 +389,10 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
             ->name($this->name . $this->suffix)
             ->pk($this->pk);
 
+        if (!empty($this->autoInc)) {
+            $query->autoinc(is_string($this->autoInc) ? $this->autoInc : $this->pk);
+        }
+
         if (!empty($this->table)) {
             $query->table($this->table . $this->suffix);
         }
