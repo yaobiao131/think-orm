@@ -130,11 +130,11 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
     protected $globalScope = [];
 
     /**
-     * 数据递增递减.
+     * 数据字段值的变化.
      *
      * @var array
      */
-    protected $inc = [];
+    protected $change = [];
 
     /**
      * Db对象
@@ -560,7 +560,7 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
     public function inc(string $field, float $step = 1)
     {
         $this->setAttr($field, ['INC', $step]);
-        $this->inc[$field] = [$this->origin[$field], '+', $step];
+        $this->change[$field] = $this->origin[$field] + $step;
         return $this;
     }
 
@@ -575,7 +575,7 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
     public function dec(string $field, float $step = 1)
     {
         $this->setAttr($field, ['DEC', $step]);
-        $this->inc[$field] = [$this->origin[$field], '-', $step];
+        $this->change[$field] = $this->origin[$field] - $step;
         return $this;
     }
 
@@ -611,12 +611,12 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
         // 写入回调
         $this->trigger('AfterWrite');
 
-        if (!empty($this->inc)) {
+        if (!empty($this->change)) {
             // 处理递增递减数据
-            foreach ($this->inc as $field => $val) {
-                $this->data[$field] = '+' == $val[1] ? $val[0] + $val[2] : $val[0] - $val[2];
+            foreach ($this->change as $field => $val) {
+                $this->data[$field] = $val;
             }
-            $this->inc = [];
+            $this->change = [];
         }
 
         // 重新记录原始数据
