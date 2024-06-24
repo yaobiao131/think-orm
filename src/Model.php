@@ -616,6 +616,7 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
             foreach ($this->inc as $field => $val) {
                 $this->data[$field] = '+' == $val[1] ? $val[0] + $val[2] : $val[0] - $val[2];
             }
+            $this->inc = [];
         }
 
         // 重新记录原始数据
