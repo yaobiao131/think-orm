@@ -63,7 +63,7 @@ class Builder extends BaseBuilder
             if ($val instanceof Raw) {
                 $result[$item] = $this->parseRaw($query, $val);
                 continue;
-            }elseif (is_null($val) && !str_contains($item, ',')) {
+            }elseif (is_null($val) && in_array($key, $fields, true)) {
                 $result[$item] = 'NULL';
                 continue;
             } elseif (!is_scalar($val) && (in_array($key, (array) $query->getOptions('json')) || 'json' == $query->getFieldType($key))) {
