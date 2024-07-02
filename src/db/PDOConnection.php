@@ -348,7 +348,8 @@ abstract class PDOConnection extends Connection
      */
     protected function getSchemaCacheKey(string $schema): string
     {
-        return $this->getConfig('hostname') . '_' . $this->getConfig('hostport') . '|' . $schema;
+        $hostname = $this->getConfig('hostname');
+        return (is_array($hostname)? $hostname[0] : $hostname) . '_' . $this->getConfig('hostport') . '|' . $schema;
     }
 
     /**
