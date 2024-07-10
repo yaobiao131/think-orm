@@ -725,7 +725,10 @@ abstract class PDOConnection extends Connection
                 $key = $cacheItem->getKey();
 
                 if ($this->cache->has($key)) {
-                    return $this->cache->get($key);
+                    $data = $this->cache->get($key);
+                    if (null !== $data) {
+                        return $data;
+                    }
                 }
             }
         }
