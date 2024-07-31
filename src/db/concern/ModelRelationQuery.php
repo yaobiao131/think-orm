@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-declare(strict_types=1);
+declare (strict_types = 1);
 
 namespace think\db\concern;
 
@@ -174,7 +174,7 @@ trait ModelRelationQuery
             } elseif ($this->model) {
                 // 检测搜索器
                 $fieldName = is_numeric($key) ? $field : $key;
-                $method = 'search' . Str::studly($fieldName) . 'Attr';
+                $method    = 'search' . Str::studly($fieldName) . 'Attr';
 
                 if (method_exists($this->model, $method)) {
                     $this->model->$method($this, $data[$field] ?? null, $data, $prefix);
@@ -237,7 +237,7 @@ trait ModelRelationQuery
      *
      * @return $this
      */
-    public function withAttr(string|array $name, callable $callback = null)
+    public function withAttr(string | array $name, callable $callback = null)
     {
         if (is_array($name)) {
             foreach ($name as $key => $val) {
@@ -269,7 +269,7 @@ trait ModelRelationQuery
      *
      * @return $this
      */
-    public function with(array|string $with)
+    public function with(array | string $with)
     {
         if (empty($this->model) || empty($with)) {
             return $this;
@@ -288,25 +288,25 @@ trait ModelRelationQuery
      *
      * @return $this
      */
-    public function withJoin(array|string $with, string $joinType = '')
+    public function withJoin(array | string $with, string $joinType = '')
     {
         if (empty($this->model) || empty($with)) {
             return $this;
         }
 
-        $with = (array) $with;
+        $with  = (array) $with;
         $first = true;
 
         foreach ($with as $key => $relation) {
             $closure = null;
-            $field = true;
+            $field   = true;
 
             if ($relation instanceof Closure) {
                 // 支持闭包查询过滤关联条件
-                $closure = $relation;
+                $closure  = $relation;
                 $relation = $key;
             } elseif (is_array($relation)) {
-                $field = $relation;
+                $field    = $relation;
                 $relation = $key;
             } elseif (is_string($relation) && str_contains($relation, '.')) {
                 $relation = strstr($relation, '.', true);
@@ -337,7 +337,7 @@ trait ModelRelationQuery
      *
      * @return $this
      */
-    protected function withAggregate(string|array $relations, string $aggregate = 'count', $field = '*', bool $subQuery = true)
+    protected function withAggregate(string | array $relations, string $aggregate = 'count', $field = '*', bool $subQuery = true)
     {
         if (empty($this->model)) {
             return $this;
@@ -368,7 +368,7 @@ trait ModelRelationQuery
      *
      * @return $this
      */
-    public function withCache(string|array|bool $relation = true, $key = true, $expire = null, string $tag = null)
+    public function withCache(string | array | bool $relation = true, $key = true, $expire = null, string $tag = null)
     {
         if (empty($this->model)) {
             return $this;
@@ -378,9 +378,9 @@ trait ModelRelationQuery
             return $this;
         }
 
-        if ($key instanceof \DateTimeInterface || $key instanceof \DateInterval || (is_int($key) && is_null($expire))) {
+        if ($key instanceof \DateTimeInterface  || $key instanceof \DateInterval  || (is_int($key) && is_null($expire))) {
             $expire = $key;
-            $key = true;
+            $key    = true;
         }
 
         if (true === $relation || is_numeric($relation)) {
@@ -409,7 +409,7 @@ trait ModelRelationQuery
      *
      * @return $this
      */
-    public function withCount(string|array $relation, bool $subQuery = true)
+    public function withCount(string | array $relation, bool $subQuery = true)
     {
         return $this->withAggregate($relation, 'count', '*', $subQuery);
     }
@@ -423,7 +423,7 @@ trait ModelRelationQuery
      *
      * @return $this
      */
-    public function withSum(string|array $relation, string $field, bool $subQuery = true)
+    public function withSum(string | array $relation, string $field, bool $subQuery = true)
     {
         return $this->withAggregate($relation, 'sum', $field, $subQuery);
     }
@@ -437,7 +437,7 @@ trait ModelRelationQuery
      *
      * @return $this
      */
-    public function withMax(string|array $relation, string $field, bool $subQuery = true)
+    public function withMax(string | array $relation, string $field, bool $subQuery = true)
     {
         return $this->withAggregate($relation, 'max', $field, $subQuery);
     }
@@ -451,7 +451,7 @@ trait ModelRelationQuery
      *
      * @return $this
      */
-    public function withMin(string|array $relation, string $field, bool $subQuery = true)
+    public function withMin(string | array $relation, string $field, bool $subQuery = true)
     {
         return $this->withAggregate($relation, 'min', $field, $subQuery);
     }
@@ -465,7 +465,7 @@ trait ModelRelationQuery
      *
      * @return $this
      */
-    public function withAvg(string|array $relation, string $field, bool $subQuery = true)
+    public function withAvg(string | array $relation, string $field, bool $subQuery = true)
     {
         return $this->withAggregate($relation, 'avg', $field, $subQuery);
     }

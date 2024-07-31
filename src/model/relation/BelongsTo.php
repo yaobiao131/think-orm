@@ -192,12 +192,15 @@ class BelongsTo extends OneToOne
         $query      = $query ?: $this->parent->db();
 
         return $query->alias($model)
+            ->via($model)
             ->field($fields)
             ->join([$table => $relation], $model . '.' . $this->foreignKey . '=' . $relation . '.' . $this->localKey, $joinType ?: $this->joinType)
             ->when($softDelete, function ($query) use ($softDelete, $relation) {
                 $query->where($relation . strstr($softDelete[0], '.'), '=' == $softDelete[1][0] ? $softDelete[1][1] : null);
             })
-            ->where($where);
+            ->where(function ($query) use ($where) {
+                $query->where($where);
+            });
     }
 
     /**
