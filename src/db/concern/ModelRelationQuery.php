@@ -166,7 +166,7 @@ trait ModelRelationQuery
 
         foreach ($scope as $name) {
             if (isset($this->options['scope'][$name])) {
-                unset($this->options['score'][$name]);
+                unset($this->options['scope'][$name]);
             }
         }
 
