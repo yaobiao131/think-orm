@@ -115,18 +115,58 @@ trait ModelRelationQuery
             return $this;
         }
 
-        if (is_string($scope)) {
-            $scope = explode(',', $scope);
-        }
-
         if ($this->model) {
+            if (is_string($scope)) {
+                $scope = explode(',', $scope);
+            }
+
             // 检查模型类的查询范围方法
             foreach ($scope as $name) {
                 $method = 'scope' . trim($name);
 
+                $this->options['scope'][$name] = [$method, $args];
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * 执行查询范围查询.
+     *
+     * @return $this
+     */
+    protected function scopeQuery()
+    {
+        if ($this->model && !empty($this->options['scope'])) {
+            foreach ($this->options['scope'] as $name => $val) {
+                [$method, $args] = $val;
                 if (method_exists($this->model, $method)) {
                     call_user_func_array([$this->model, $method], $args);
                 }
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * 指定不使用的查询范围.
+     *
+     * @param array|null $scope 查询范围
+     *
+     * @return $this
+     */
+    public function withoutScope(?array $scope)
+    {
+        if (is_null($scope)) {
+            $this->options['scope'] = [];
+            return $this;
+        }
+
+        foreach ($scope as $name) {
+            if (isset($this->options['scope'][$name])) {
+                unset($this->options['score'][$name]);
             }
         }
 
