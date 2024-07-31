@@ -153,13 +153,13 @@ trait ModelRelationQuery
     /**
      * 指定不使用的查询范围.
      *
-     * @param array|null $scope 查询范围
+     * @param array $scope 查询范围
      *
      * @return $this
      */
-    public function withoutScope(?array $scope)
+    public function withoutScope(array $scope = [])
     {
-        if (is_null($scope)) {
+        if (empty($scope)) {
             $this->options['scope'] = [];
             return $this;
         }
