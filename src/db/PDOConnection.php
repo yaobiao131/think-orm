@@ -292,25 +292,27 @@ abstract class PDOConnection extends Connection
      */
     protected function getFieldType(string $type): string
     {
-        if (0 === stripos($type, 'set') || 0 === stripos($type, 'enum')) {
-            $result = 'string';
-        } elseif (preg_match('/(double|float|decimal|real|numeric)/is', $type)) {
-            $result = 'float';
-        } elseif (preg_match('/(int|serial|bit)/is', $type)) {
-            $result = 'int';
-        } elseif (preg_match('/bool/is', $type)) {
-            $result = 'bool';
-        } elseif (0 === stripos($type, 'timestamp')) {
-            $result = 'timestamp';
-        } elseif (0 === stripos($type, 'datetime')) {
-            $result = 'datetime';
-        } elseif (0 === stripos($type, 'date')) {
-            $result = 'date';
-        } else {
-            $result = 'string';
-        }
+        $type = strtolower($type);
 
-        return $result;
+        switch (true) {
+            case strpos($type, 'set') === 0:
+            case strpos($type, 'enum') === 0:
+                return 'string';
+            case preg_match('/(double|float|decimal|real|numeric)/i', $type):
+                return 'float';
+            case preg_match('/(int|serial|bit)/i', $type):
+                return 'int';
+            case strpos($type, 'bool') !== false:
+                return 'bool';
+            case strpos($type, 'timestamp') === 0:
+                return 'timestamp';
+            case strpos($type, 'datetime') === 0:
+                return 'datetime';
+            case strpos($type, 'date') === 0:
+                return 'date';
+            default:
+                return 'string';
+        }
     }
 
     /**
@@ -322,21 +324,14 @@ abstract class PDOConnection extends Connection
      */
     public function getFieldBindType(string $type): int
     {
-        if (in_array($type, ['integer', 'string', 'float', 'boolean', 'bool', 'int', 'str'])) {
-            $bind = $this->bindType[$type];
-        } elseif (str_starts_with($type, 'set') || str_starts_with($type, 'enum')) {
-            $bind = self::PARAM_STR;
-        } elseif (preg_match('/(double|float|decimal|real|numeric)/is', $type)) {
-            $bind = self::PARAM_FLOAT;
-        } elseif (preg_match('/(int|serial|bit)/is', $type)) {
-            $bind = self::PARAM_INT;
-        } elseif (preg_match('/bool/is', $type)) {
-            $bind = self::PARAM_BOOL;
-        } else {
-            $bind = self::PARAM_STR;
-        }
-
-        return $bind;
+        return match (true) {
+            in_array($type, ['integer', 'string', 'float', 'boolean', 'bool', 'int', 'str']) => $this->bindType[$type],
+            str_starts_with($type, 'set'), str_starts_with($type, 'enum') => self::PARAM_STR,
+            preg_match('/(double|float|decimal|real|numeric)/i', $type)   => self::PARAM_FLOAT,
+            preg_match('/(int|serial|bit)/i', $type)                      => self::PARAM_INT,
+            preg_match('/bool/i', $type)                                  => self::PARAM_BOOL,
+            default                                                       => self::PARAM_STR,
+        };
     }
 
     /**
@@ -358,47 +353,57 @@ abstract class PDOConnection extends Connection
      *
      * @return array
      */
-    public function getSchemaInfo(string $tableName, $force = false)
+    public function getSchemaInfo(string $tableName, bool $force = false): array
     {
-        if (!str_contains($tableName, '.')) {
-            $schema = $this->getConfig('database') . '.' . $tableName;
-        } else {
-            $schema = $tableName;
+        $schema = str_contains($tableName, '.') ? $tableName : $this->getConfig('database') . '.' . $tableName;
+
+        if (isset($this->info[$schema]) && !$force) {
+            return $this->info[$schema];
         }
 
-        if (!isset($this->info[$schema]) || $force) {
-            // 读取字段缓存
-            $cacheKey = $this->getSchemaCacheKey($schema);
-            if ($this->config['fields_cache'] && !empty($this->cache) && !$force) {
-                $info = $this->cache->get($cacheKey);
-            }
+        // 读取字段缓存
+        $cacheKey = $this->getSchemaCacheKey($schema);
+        $info     = $this->getCachedSchemaInfo($cacheKey, $tableName, $force);
 
-            if (empty($info)) {
-                $info = $this->getTableFieldsInfo($tableName);
-                if (!empty($this->cache) && ($this->config['fields_cache'] || $force)) {
-                    $this->cache->set($cacheKey, $info);
-                }
-            }
+        $pk      = $info['_pk'] ?? null;
+        $autoinc = $info['_autoinc'] ?? null;
+        unset($info['_pk'], $info['_autoinc']);
 
-            $pk      = $info['_pk'] ?? null;
-            $autoinc = $info['_autoinc'] ?? null;
-            unset($info['_pk'], $info['_autoinc']);
+        $bind = array_map(fn($val) => $this->getFieldBindType($val), $info);
 
-            $bind = [];
-            foreach ($info as $name => $val) {
-                $bind[$name] = $this->getFieldBindType($val);
-            }
-
-            $this->info[$schema] = [
-                'fields'  => array_keys($info),
-                'type'    => $info,
-                'bind'    => $bind,
-                'pk'      => $pk,
-                'autoinc' => $autoinc,
-            ];
-        }
+        $this->info[$schema] = [
+            'fields'  => array_keys($info),
+            'type'    => $info,
+            'bind'    => $bind,
+            'pk'      => $pk,
+            'autoinc' => $autoinc,
+        ];
 
         return $this->info[$schema];
+    }
+
+    /**
+     * @param string $cacheKey 缓存key
+     * @param string $tableName 数据表名称
+     * @param bool   $force     强制从数据库获取
+     *
+     * @return array
+     */
+    protected function getCachedSchemaInfo(string $cacheKey, string $tableName, bool $force): array
+    {
+        if ($this->config['fields_cache'] && !empty($this->cache) && !$force) {
+            $info = $this->cache->get($cacheKey);
+            if (!empty($info)) {
+                return $info;
+            }
+        }
+
+        $info = $this->getTableFieldsInfo($tableName);
+        if (!empty($this->cache) && ($this->config['fields_cache'] || $force)) {
+            $this->cache->set($cacheKey, $info);
+        }
+
+        return $info;
     }
 
     /**
@@ -409,7 +414,7 @@ abstract class PDOConnection extends Connection
      *
      * @return mixed
      */
-    public function getTableInfo($tableName, string $fetch = '')
+    public function getTableInfo(array|string $tableName, string $fetch = '')
     {
         if (is_array($tableName)) {
             $tableName = key($tableName) ?: current($tableName);
@@ -424,7 +429,7 @@ abstract class PDOConnection extends Connection
 
         $info = $this->getSchemaInfo($tableName);
 
-        return $fetch ? $info[$fetch] : $info;
+        return $fetch && isset($info[$fetch]) ? $info[$fetch] : $info;
     }
 
     /**
@@ -795,7 +800,6 @@ abstract class PDOConnection extends Connection
             $this->queryStr = $sql;
             $this->bind     = $bind;
 
-            $this->db->updateQueryTimes();
             $this->queryStartTime = microtime(true);
 
             // 预处理
