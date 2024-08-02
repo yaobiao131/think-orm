@@ -414,7 +414,7 @@ abstract class PDOConnection extends Connection
      *
      * @return mixed
      */
-    public function getTableInfo(array|string $tableName, string $fetch = '')
+    public function getTableInfo(array | string $tableName, string $fetch = '')
     {
         if (is_array($tableName)) {
             $tableName = key($tableName) ?: current($tableName);
@@ -1564,7 +1564,7 @@ abstract class PDOConnection extends Connection
                 $this->linkID->beginTransaction();
             } elseif ($this->transTimes > 0 && $this->supportSavepoint() && $this->linkID->inTransaction()) {
                 $this->linkID->exec(
-                    $this->parseSavepoint('trans' . $this->transTimes)
+                    $this->parseSavepoint('trans' . ($this->transTimes + 1))
                 );
             }
             $this->transTimes++;
@@ -1594,12 +1594,11 @@ abstract class PDOConnection extends Connection
     public function commit(): void
     {
         $this->initConnect(true);
+        $this->transTimes = max(0, $this->transTimes - 1);
 
-        if (1 == $this->transTimes && $this->linkID->inTransaction()) {
+        if (0 == $this->transTimes && $this->linkID->inTransaction()) {
             $this->linkID->commit();
         }
-
-        $this->transTimes--;
     }
 
     /**
@@ -1612,18 +1611,17 @@ abstract class PDOConnection extends Connection
     public function rollback(): void
     {
         $this->initConnect(true);
+        $this->transTimes = max(0, $this->transTimes - 1);
 
         if ($this->linkID->inTransaction()) {
-            if (1 == $this->transTimes) {
+            if (0 == $this->transTimes) {
                 $this->linkID->rollBack();
-            } elseif ($this->transTimes > 1 && $this->supportSavepoint()) {
+            } elseif ($this->transTimes > 0 && $this->supportSavepoint()) {
                 $this->linkID->exec(
-                    $this->parseSavepointRollBack('trans' . $this->transTimes)
+                    $this->parseSavepointRollBack('trans' . ($this->transTimes + 1))
                 );
             }
         }
-
-        $this->transTimes = max(0, $this->transTimes - 1);
     }
 
     /**
