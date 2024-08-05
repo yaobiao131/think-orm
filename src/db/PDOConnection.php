@@ -1766,6 +1766,10 @@ abstract class PDOConnection extends Connection
     protected function autoInsIDType(BaseQuery $query, string $insertId)
     {
         $pk = $query->getAutoInc();
+        
+        if (is_array($pk)) {
+            return $insertId;
+        }
 
         if ($pk) {
             $type = $this->getFieldsBind($query->getTable())[$pk];
