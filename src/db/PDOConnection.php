@@ -1002,7 +1002,7 @@ abstract class PDOConnection extends Connection
 
             if ($lastInsId) {
                 $pk = $query->getAutoInc();
-                if ($pk) {
+                if ($pk && is_string($pk)) {
                     $data[$pk] = $lastInsId;
                 }
             }
@@ -1283,7 +1283,7 @@ abstract class PDOConnection extends Connection
      *
      * @return mixed
      */
-    public function aggregate(BaseQuery $query, string $aggregate, string|Raw $field, bool $force = false)
+    public function aggregate(BaseQuery $query, string $aggregate, string | Raw $field, bool $force = false)
     {
         if (is_string($field) && 0 === stripos($field, 'DISTINCT ')) {
             [$distinct, $field] = explode(' ', $field);
@@ -1766,12 +1766,8 @@ abstract class PDOConnection extends Connection
     protected function autoInsIDType(BaseQuery $query, string $insertId)
     {
         $pk = $query->getAutoInc();
-        
-        if (is_array($pk)) {
-            return $insertId;
-        }
 
-        if ($pk) {
+        if ($pk && is_string($pk)) {
             $type = $this->getFieldsBind($query->getTable())[$pk];
 
             if (self::PARAM_INT == $type) {
