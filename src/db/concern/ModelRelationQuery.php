@@ -110,8 +110,7 @@ trait ModelRelationQuery
         array_unshift($args, $this);
 
         if ($scope instanceof Closure) {
-            call_user_func_array($scope, $args);
-
+            $this->options['scope'][] = [$scope, $args];
             return $this;
         }
 
@@ -123,8 +122,9 @@ trait ModelRelationQuery
             // 检查模型类的查询范围方法
             foreach ($scope as $name) {
                 $method = 'scope' . trim($name);
-
-                $this->options['scope'][$name] = [$method, $args];
+                if (method_exists($this->model, $method)) {
+                    $this->options['scope'][$name] = [[$this->model, $method], $args];
+                }
             }
         }
 
@@ -138,12 +138,10 @@ trait ModelRelationQuery
      */
     protected function scopeQuery()
     {
-        if ($this->model && !empty($this->options['scope'])) {
+        if (!empty($this->options['scope'])) {
             foreach ($this->options['scope'] as $name => $val) {
-                [$method, $args] = $val;
-                if (method_exists($this->model, $method)) {
-                    call_user_func_array([$this->model, $method], $args);
-                }
+                [$call, $args] = $val;
+                call_user_func_array($call, $args);
             }
         }
 

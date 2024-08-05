@@ -130,10 +130,8 @@ abstract class BaseQuery
 
         if ($this->model && method_exists($this->model, 'scope' . $method)) {
             // 动态调用命名范围
-            $call = 'scope' . $method;
             array_unshift($args, $this);
-
-            $this->options['scope'][$method] = [$call, $args];
+            $this->options['scope'][$method] = [[$this->model, 'scope' . $method], $args];
 
             return $this;
         }
