@@ -392,12 +392,12 @@ class Query extends BaseQuery
      * 字段值增长（支持延迟写入）
      *
      * @param string    $field 字段名
-     * @param int       $step  步进值
+     * @param float     $step  步进值
      * @param int       $lazyTime 延迟时间（秒）
      *
      * @return int|false
      */
-    public function setInc(string $field, int $step = 1, $lazyTime = 0)
+    public function setInc(string $field, float $step = 1, int $lazyTime = 0)
     {
         if (empty($this->options['where']) && $this->model) {
             $this->where($this->model->getWhere());
@@ -423,12 +423,12 @@ class Query extends BaseQuery
      * 字段值减少（支持延迟写入）
      *
      * @param string    $field 字段名
-     * @param int       $step  步进值
+     * @param float     $step  步进值
      * @param int       $lazyTime 延迟时间（秒）
      *
      * @return int|false
      */
-    public function setDec(string $field, int $step = 1, int $lazyTime = 0)
+    public function setDec(string $field, float $step = 1, int $lazyTime = 0)
     {
         if (empty($this->options['where']) && $this->model) {
             $this->where($this->model->getWhere());
@@ -457,11 +457,11 @@ class Query extends BaseQuery
      * @access protected
      * @param  string  $type     自增或者自减
      * @param  string  $guid     写入标识
-     * @param  int     $step     写入步进值
+     * @param  float   $step     写入步进值
      * @param  int     $lazyTime 延时时间(s)
      * @return false|integer
      */
-    protected function lazyWrite(string $type, string $guid, int $step, int $lazyTime)
+    protected function lazyWrite(string $type, string $guid, float $step, int $lazyTime)
     {
         $cache = $this->getCache();
         if (!$cache->has($guid . '_time')) {
