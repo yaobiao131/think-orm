@@ -214,7 +214,7 @@ trait ModelRelationQuery
                 $field($this, $data[$key] ?? null, $data);
             } elseif ($this->model) {
                 // 检查字段是否有数据
-                if ($strict && (!isset($data[$field]) || (empty($data[$field]) && 0 !== $data[$field]))) {
+                if ($strict && (!isset($data[$field]) || empty($data[$field]))) {
                     continue;
                 }
 
