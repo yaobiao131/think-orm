@@ -167,7 +167,7 @@ trait ResultOperation
         if (!empty($this->options['fail'])) {
             $this->throwNotFound();
         } elseif ($closure instanceof Closure) {
-            return $closure();
+            return $closure($this);
         } elseif (!empty($this->options['allow_empty'])) {
             return !empty($this->model) ? $this->model->newInstance() : [];
         }
