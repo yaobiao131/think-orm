@@ -71,6 +71,13 @@ abstract class BaseQuery
     protected $prefix = '';
 
     /**
+     * 当前数据表后缀
+     *
+     * @var string
+     */
+    protected $suffix = '';
+
+    /**
      * 当前查询参数.
      *
      * @var array
@@ -155,7 +162,7 @@ abstract class BaseQuery
         if (isset($this->options['table'])) {
             $query->table($this->options['table']);
         } else {
-            $query->name($this->name);
+            $query->name($this->name)->suffix($this->suffix);
         }
 
         if (!empty($this->options['json'])) {
@@ -193,6 +200,20 @@ abstract class BaseQuery
     public function name(string $name)
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+        /**
+     * 指定当前数据表后缀.
+     *
+     * @param string $suffix 后缀
+     *
+     * @return $this
+     */
+    public function suffix(string $suffix)
+    {
+        $this->suffix = $suffix;
 
         return $this;
     }
@@ -269,7 +290,7 @@ abstract class BaseQuery
 
         $name = $name ?: $this->name;
 
-        return $this->prefix . Str::snake($name);
+        return $this->prefix . Str::snake($name) . $this->suffix;
     }
 
     /**
