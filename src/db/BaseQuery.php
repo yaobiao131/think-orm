@@ -204,7 +204,7 @@ abstract class BaseQuery
         return $this;
     }
 
-        /**
+    /**
      * 指定当前数据表后缀.
      *
      * @param string $suffix 后缀
@@ -1359,7 +1359,8 @@ abstract class BaseQuery
     /**
      * 查找单条记录.
      *
-     * @param mixed $data 主键数据
+     * @param mixed   $data 主键数据
+     * @param Closure $closure 闭包数据
      *
      * @throws Exception
      * @throws ModelNotFoundException
@@ -1367,9 +1368,11 @@ abstract class BaseQuery
      *
      * @return mixed
      */
-    public function find($data = null)
+    public function find($data = null, Closure $closure = null)
     {
-        if (!is_null($data)) {
+        if ($data instanceof Closure) {
+            $closure = $data;
+        } elseif (!is_null($data)) {
             // AR模式分析主键条件
             $this->parsePkWhere($data);
         }
@@ -1382,7 +1385,7 @@ abstract class BaseQuery
 
         // 数据处理
         if (empty($result)) {
-            return $this->resultToEmpty();
+            return $this->resultToEmpty($closure);
         }
 
         if (!empty($this->model)) {
