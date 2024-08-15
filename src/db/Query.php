@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-declare(strict_types=1);
+declare (strict_types = 1);
 
 namespace think\db;
 
@@ -519,7 +519,7 @@ class Query extends BaseQuery
     {
         if (null === $data) {
             $data = $this->options;
-            unset($data['scope']);
+            unset($data['scope'], $data['default_model']);
         }
 
         return md5($this->getConfig('database') . serialize(var_export($data, true)) . serialize($this->getBind(false)));
@@ -568,10 +568,10 @@ class Query extends BaseQuery
      *
      * @return bool
      */
-    public function chunk(int $count, callable $callback, string|array $column = null, string $order = 'asc'): bool
+    public function chunk(int $count, callable $callback, string | array $column = null, string $order = 'asc'): bool
     {
         $options = $this->getOptions();
-        $column = $column ?: $this->getPk();
+        $column  = $column ?: $this->getPk();
 
         if (isset($options['order'])) {
             unset($options['order']);
@@ -603,7 +603,7 @@ class Query extends BaseQuery
                 $times++;
                 $query = $this->options($options)->page($times, $count);
             } else {
-                $end = $resultSet->pop();
+                $end    = $resultSet->pop();
                 $lastId = is_array($end) ? $end[$key] : $end->getData($key);
 
                 $query = $this->options($options)
