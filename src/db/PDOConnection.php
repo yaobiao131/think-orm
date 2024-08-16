@@ -296,14 +296,18 @@ abstract class PDOConnection extends Connection
      */
     protected function getFieldType(string $type): string
     {
+        // 将字段类型转换为小写以进行比较
         $type = strtolower($type);
 
         return match (true) {
             str_starts_with($type, 'set') => 'set',
             str_starts_with($type, 'enum') => 'enum',
             str_starts_with($type, 'bigint') => 'bigint',
-            preg_match('/(double|float|decimal|real|numeric)/i', $type) => 'float',
-            preg_match('/(int|serial|bit)/i', $type) => 'int',
+            str_contains($type, 'float') || str_contains($type, 'double') ||
+            str_contains($type, 'decimal') || str_contains($type, 'real') ||
+            str_contains($type, 'numeric') => 'float',
+            str_contains($type, 'int') || str_contains($type, 'serial') ||
+            str_contains($type, 'bit') => 'int',
             str_contains($type, 'bool') => 'bool',
             str_starts_with($type, 'timestamp') => 'timestamp',
             str_starts_with($type, 'datetime') => 'datetime',
