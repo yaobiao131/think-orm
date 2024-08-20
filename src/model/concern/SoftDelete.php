@@ -26,6 +26,13 @@ use think\Model;
  */
 trait SoftDelete
 {
+    /**
+     * 软删除字段默认值
+     *
+     * @var mixed
+     */
+    protected $defaultSoftDelete;
+        
     public function db($scope = []): Query
     {
         $query = parent::db($scope);
