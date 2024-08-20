@@ -122,7 +122,10 @@ trait ParamsBind
             } elseif (str_ends_with($sql, ':' . $key)) {
                 $sql = substr_replace($sql, ':' . $name . ' ', strrpos($sql, ':' . $key), strlen(':' . $key));
             } else {
-                $sql = str_replace([':' . $key . ' ', ':' . $key . ')'], [':' . $name . ' ', ':' . $name . ')'], $sql);
+                $sql = str_replace(
+                    [':' . $key . ' ', ':' . $key . ',', ':' . $key . ')'],
+                    [':' . $name . ' ', ':' . $name . ',', ':' . $name . ')'],
+                    $sql);
             }
         }
     }

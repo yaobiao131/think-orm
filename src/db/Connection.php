@@ -389,7 +389,10 @@ abstract class Connection implements ConnectionInterface
             // 判断占位符
             $sql = is_numeric($key) ?
             substr_replace($sql, $value, strpos($sql, '?'), 1) :
-            str_replace([':' . $key . ' ', ':' . $key . ')'], [$value . ' ', $value . ')'], $sql);
+            str_replace(
+                [':' . $key . ' ', ':' . $key . ',', ':' . $key . ')'],
+                [$value . ' ', $value . ',', $value . ')'],
+                $sql);
         }
 
         return rtrim($sql);
