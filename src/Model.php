@@ -137,6 +137,13 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
     protected $lazyFields = [];
 
     /**
+     * 软删除字段默认值
+     *
+     * @var mixed
+     */
+    protected $defaultSoftDelete;
+
+    /**
      * Db对象
      *
      * @var DbManager
