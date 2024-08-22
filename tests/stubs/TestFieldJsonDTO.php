@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace tests\stubs;
 
 use think\Model;
-use think\model\contracts\FieldTypeTransform;
+use think\model\contract\FieldTypeTransform;
 
 class TestFieldJsonDTO implements FieldTypeTransform, \JsonSerializable
 {
