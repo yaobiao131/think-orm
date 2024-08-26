@@ -668,11 +668,11 @@ trait Attribute
      *
      * @return $this
      */
-    public function withAttr(string | array $name, Closure $callback = null)
+    public function withFieldAttr(string | array $name, Closure $callback = null)
     {
         if (is_array($name)) {
             foreach ($name as $key => $val) {
-                $this->withAttr($key, $val);
+                $this->withFieldAttr($key, $val);
             }
         } else {
             $name = $this->getRealFieldName($name);

@@ -675,7 +675,7 @@ trait ModelRelationQuery
 
         // 动态获取器
         if (!empty($this->options['with_attr'])) {
-            $result->withAttr($this->options['with_attr']);
+            $result->withFieldAttr($this->options['with_attr']);
         }
 
         foreach (['hidden', 'visible', 'append'] as $name) {
