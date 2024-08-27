@@ -43,6 +43,7 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
     use model\concern\RelationShip;
     use model\concern\ModelEvent;
     use model\concern\TimeStamp;
+    use model\concern\AutoWriteId;
     use model\concern\Conversion;
 
     /**
@@ -761,7 +762,16 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
         $this->checkData();
         $data = $this->data;
 
-        // 时间戳自动写入
+        // 主键自动写入
+        if ($this->isAutoWriteId()) {
+            $pk = $this->getPk();
+            if (is_string($pk) && !isset($data[$pk])) {
+                $data[$pk]       = $this->autoWriteId();
+                $this->data[$pk] = $data[$pk];
+            }
+        }
+
+        // 时间字段自动写入
         if ($this->autoWriteTimestamp) {
             if ($this->createTime && !array_key_exists($this->createTime, $data)) {
                 $data[$this->createTime]       = $this->autoWriteTimestamp();
@@ -787,7 +797,7 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
                 ->insert($data, true);
 
             // 获取自动增长主键
-            if ($result) {
+            if ($result && !$this->isAutoWriteId()) {
                 $pk = $this->getPk();
 
                 if (is_string($pk) && (!isset($this->data[$pk]) || '' == $this->data[$pk])) {
