@@ -352,8 +352,12 @@ abstract class BaseQuery
         $result = $this->connection->value($this, $field, $default);
 
         $array[$field] = $result;
-        $this->result($array);
 
+        if ($this->model) {
+            return $this->model->newInstance($array)->getAttr($field);
+        }
+
+        $this->result($array);
         return $array[$field];
     }
 
@@ -369,11 +373,25 @@ abstract class BaseQuery
     {
         $result = $this->connection->column($this, $field, $key);
 
-        if (count($result) != count($result, 1)) {
-            $this->resultSet($result, false);
+        if ($this->model) {
+            return array_map(function ($item) use ($field) {
+                if (is_array($item)) {
+                    return $this->model->newInstance($item)->toarray();
+                }
+                $array[$field] = $item;
+                return $this->model->newInstance($array)->getAttr($field);
+            }, $result);
         }
 
-        return $result;
+        return array_map(function ($item) use ($field) {
+            if (is_array($item)) {
+                $this->result($item);
+                return $item;
+            }
+            $array[$field] = $item;
+            $this->result($array);
+            return $array[$field];
+        }, $result);
     }
 
     /**
