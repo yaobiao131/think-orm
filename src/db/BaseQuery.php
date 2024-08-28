@@ -308,6 +308,20 @@ abstract class BaseQuery
     }
 
     /**
+     * 设置只读字段.
+     *
+     * @param array $fields 只读字段
+     *
+     * @return $this
+     */
+    public function readonly(array $fields)
+    {
+        $this->options['readonly_fields'] = $fields;
+
+        return $this;
+    }
+
+    /**
      * 获取最近一次查询的sql语句.
      *
      * @return string
@@ -1292,6 +1306,15 @@ abstract class BaseQuery
         if (empty($this->options['where'])) {
             // 如果没有任何更新条件则不执行
             throw new Exception('miss update condition');
+        }
+
+        // 检查只读字段
+        if (!empty($this->options['readonly_fields'])) {
+            foreach ($this->options['readonly_fields'] as $field) {
+                if (array_key_exists($field, $this->options['data'])) {
+                    unset($this->options['data'][$field]);
+                }
+            }
         }
 
         return $this->connection->update($this);
