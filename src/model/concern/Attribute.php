@@ -418,7 +418,7 @@ trait Attribute
             if (is_null($value) && $array !== $this->data) {
                 return;
             }
-        } elseif (isset($this->type[$name])) {
+        } elseif (!in_array($name, $this->json) && isset($this->type[$name])) {
             // 类型转换
             $value = $this->writeTransform($value, $this->type[$name]);
         } elseif ($this->isRelationAttr($name)) {
