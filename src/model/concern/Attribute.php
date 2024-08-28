@@ -548,7 +548,7 @@ trait Attribute
             }
 
             $value = $this->$method($value, $this->data);
-        } elseif (isset($this->type[$fieldName])) {
+        } elseif (!in_array($fieldName, $this->json) && isset($this->type[$fieldName])) {
             // 类型转换
             $value = $this->readTransform($value, $this->type[$fieldName]);
         } elseif ($this->autoWriteTimestamp && in_array($fieldName, [$this->createTime, $this->updateTime])) {
