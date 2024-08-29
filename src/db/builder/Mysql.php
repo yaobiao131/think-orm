@@ -390,7 +390,7 @@ class Mysql extends Builder
             // JSON字段支持
             [$field, $name] = explode('->', $key, 2);
 
-            return 'JSON_UNQUOTE(json_extract(' . $this->parseKey($query, $field, true) . ', \'$' . (str_starts_with($name, '[') ? '' : '.') . str_replace('->', '.', $name) . '\'))';
+            return 'json_unquote(json_extract(' . $this->parseKey($query, $field, true) . ', \'$' . (str_starts_with($name, '[') ? '' : '.') . str_replace('->', '.', $name) . '\'))';
         }
 
         if (str_contains($key, '.') && !preg_match('/[,\'\"\(\)`\s]/', $key)) {
@@ -441,7 +441,9 @@ class Mysql extends Builder
      */
     protected function parseNull(Query $query, string $key, string $exp, $value, $field, int $bindType): string
     {
-        if (str_starts_with($key, "json_extract")) {
+        if (str_starts_with($key, "json_unquote(json_extract")) {
+            $key = str_replace('json_unquote(json_extract', '(json_extract', $key);
+
             if ('NULL' === $exp) {
                 return '(' . $key . ' is null OR json_type(' . $key . ') = \'NULL\')';
             } elseif ('NOT NULL' === $exp) {
