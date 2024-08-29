@@ -274,6 +274,19 @@ trait ModelRelationQuery
     }
 
     /**
+     * 设置关联模型的动态绑定
+     *
+     * @param array $attr 绑定数据
+     *
+     * @return $this
+     */
+    public function withBind(array $attr)
+    {
+        $this->options['bind_attr'] = $attr;
+        return $this;
+    }
+
+    /**
      * 设置数据字段获取器.
      *
      * @param string|array $name     字段名
