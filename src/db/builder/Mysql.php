@@ -30,18 +30,18 @@ class Mysql extends Builder
      * @var array
      */
     protected $parser = [
-        'parseCompare'     => ['=', '!=', '<>', '>', '>=', '<', '<='],
-        'parseLike'        => ['LIKE', 'NOT LIKE'],
-        'parseBetween'     => ['NOT BETWEEN', 'BETWEEN'],
-        'parseIn'          => ['NOT IN', 'IN'],
-        'parseExp'         => ['EXP'],
-        'parseRegexp'      => ['REGEXP', 'NOT REGEXP'],
-        'parseNull'        => ['NOT NULL', 'NULL'],
+        'parseCompare' => ['=', '!=', '<>', '>', '>=', '<', '<='],
+        'parseLike' => ['LIKE', 'NOT LIKE'],
+        'parseBetween' => ['NOT BETWEEN', 'BETWEEN'],
+        'parseIn' => ['NOT IN', 'IN'],
+        'parseExp' => ['EXP'],
+        'parseRegexp' => ['REGEXP', 'NOT REGEXP'],
+        'parseNull' => ['NOT NULL', 'NULL'],
         'parseBetweenTime' => ['BETWEEN TIME', 'NOT BETWEEN TIME'],
-        'parseTime'        => ['< TIME', '> TIME', '<= TIME', '>= TIME'],
-        'parseExists'      => ['NOT EXISTS', 'EXISTS'],
-        'parseColumn'      => ['COLUMN'],
-        'parseFindInSet'   => ['FIND IN SET'],
+        'parseTime' => ['< TIME', '> TIME', '<= TIME', '>= TIME'],
+        'parseExists' => ['NOT EXISTS', 'EXISTS'],
+        'parseColumn' => ['COLUMN'],
+        'parseFindInSet' => ['FIND IN SET'],
     ];
 
     /**
@@ -162,7 +162,7 @@ class Mysql extends Builder
     public function insertAll(Query $query, array $dataSet): string
     {
         $options = $query->getOptions();
-        $bind    = $query->getFieldsBindType();
+        $bind = $query->getFieldsBindType();
 
         // 获取合法的字段
         if (empty($options['field']) || '*' == $options['field']) {
@@ -215,9 +215,9 @@ class Mysql extends Builder
     public function insertAllByKeys(Query $query, array $keys, array $datas): string
     {
         $options = $query->getOptions();
-        $bind    = $query->getFieldsBindType();
-        $fields  = [];
-        $values  = [];
+        $bind = $query->getFieldsBindType();
+        $fields = [];
+        $values = [];
 
         foreach ($keys as $field) {
             $fields[] = $this->parseKey($query, $field);
@@ -510,12 +510,12 @@ class Mysql extends Builder
         $updates = [];
         foreach ($duplicate as $key => $val) {
             if (is_numeric($key)) {
-                $val       = $this->parseKey($query, $val);
+                $val = $this->parseKey($query, $val);
                 $updates[] = $val . ' = VALUES(' . $val . ')';
             } elseif ($val instanceof Raw) {
                 $updates[] = $this->parseKey($query, $key) . ' = ' . $this->parseRaw($query, $val);
             } else {
-                $name      = $query->bindValue($val, $query->getConnection()->getFieldBindType($key));
+                $name = $query->bindValue($val, $query->getConnection()->getFieldBindType($key));
                 $updates[] = $this->parseKey($query, $key) . ' = :' . $name;
             }
         }
