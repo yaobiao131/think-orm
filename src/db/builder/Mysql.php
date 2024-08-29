@@ -442,12 +442,10 @@ class Mysql extends Builder
     protected function parseNull(Query $query, string $key, string $exp, $value, $field, int $bindType): string
     {
         if (str_starts_with($key, "json_unquote(json_extract")) {
-            $key = str_replace('json_unquote(json_extract', '(json_extract', $key);
-
             if ('NULL' === $exp) {
-                return '(' . $key . ' is null OR json_type(' . $key . ') = \'NULL\')';
+                return '(' . $key . ' is null OR ' . $key . ' = \'null\')';
             } elseif ('NOT NULL' === $exp) {
-                return '(' . $key . ' is not null AND json_type(' . $key . ') != \'NULL\')';
+                return '(' . $key . ' is not null AND ' . $key . ' != \'null\')';
             }
         }
 
