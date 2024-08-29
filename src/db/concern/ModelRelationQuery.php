@@ -142,7 +142,7 @@ trait ModelRelationQuery
     protected function scopeQuery()
     {
         if (!empty($this->options['scope'])) {
-            foreach ($this->options['scope'] as $name => $val) {
+            foreach ($this->options['scope'] as $val) {
                 [$call, $args] = $val;
                 call_user_func_array($call, $args);
             }

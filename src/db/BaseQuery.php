@@ -1303,7 +1303,7 @@ abstract class BaseQuery
             $this->where($this->model->getWhere());
         }
 
-        if (empty($this->options['where'])) {
+        if (empty($this->options['where']) && empty($this->options['scope'])) {
             // 如果没有任何更新条件则不执行
             throw new Exception('miss update condition');
         }
@@ -1340,7 +1340,7 @@ abstract class BaseQuery
             $this->where($this->model->getWhere());
         }
 
-        if (true !== $data && empty($this->options['where'])) {
+        if (true !== $data && empty($this->options['where']) && empty($this->options['scope'])) {
             // 如果条件为空 不进行删除操作 除非设置 1=1
             throw new Exception('delete without condition');
         }
