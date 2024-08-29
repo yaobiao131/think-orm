@@ -390,7 +390,7 @@ class Mysql extends Builder
             // JSON字段支持
             [$field, $name] = explode('->', $key, 2);
 
-            return 'json_extract(' . $this->parseKey($query, $field, true) . ', \'$' . (str_starts_with($name, '[') ? '' : '.') . str_replace('->', '.', $name) . '\')';
+            return 'JSON_UNQUOTE(json_extract(' . $this->parseKey($query, $field, true) . ', \'$' . (str_starts_with($name, '[') ? '' : '.') . str_replace('->', '.', $name) . '\'))';
         }
 
         if (str_contains($key, '.') && !preg_match('/[,\'\"\(\)`\s]/', $key)) {
