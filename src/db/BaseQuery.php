@@ -368,6 +368,10 @@ abstract class BaseQuery
         $array[$field] = $result;
 
         if ($this->model) {
+            // JSON数据处理
+            if (!empty($this->options['json'])) {
+                $this->jsonModelResult($array);
+            }
             return $this->model->newInstance($array)->getAttr($field);
         }
 
