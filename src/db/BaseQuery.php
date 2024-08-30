@@ -366,7 +366,6 @@ abstract class BaseQuery
         $result = $this->connection->value($this, $field, $default);
 
         $array[$field] = $result;
-
         if ($this->model) {
             // JSON数据处理
             if (!empty($this->options['json'])) {
@@ -390,31 +389,25 @@ abstract class BaseQuery
     public function column(string | array $field, string $key = ''): array
     {
         $result = $this->connection->column($this, $field, $key);
-
-        if ($this->model) {
-            return array_map(function ($item) use ($field) {
-                if (is_array($item)) {
+        return array_map(function ($item) use ($field) {
+            if (is_array($item)) {
+                if ($this->model) {
                     // JSON数据处理
                     if (!empty($this->options['json'])) {
                         $this->jsonModelResult($item);
                     }
-                    return $this->model->newInstance($item)->toarray();
+                    return $this->model->newInstance($item)->toArray();
                 }
-                $array[$field] = $item;
-                // JSON数据处理
-                if (!empty($this->options['json'])) {
-                    $this->jsonModelResult($array);
-                }
-                return $this->model->newInstance($array)->getAttr($field);
-            }, $result);
-        }
-
-        return array_map(function ($item) use ($field) {
-            if (is_array($item)) {
                 $this->result($item);
                 return $item;
             }
             $array[$field] = $item;
+            if ($this->model) {
+                if (!empty($this->options['json'])) {
+                    $this->jsonModelResult($array);
+                }
+                return $this->model->newInstance($array)->getAttr($field);
+            }
             $this->result($array);
             return $array[$field];
         }, $result);
