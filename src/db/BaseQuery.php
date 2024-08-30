@@ -394,9 +394,17 @@ abstract class BaseQuery
         if ($this->model) {
             return array_map(function ($item) use ($field) {
                 if (is_array($item)) {
+                    // JSON数据处理
+                    if (!empty($this->options['json'])) {
+                        $this->jsonModelResult($item);
+                    }
                     return $this->model->newInstance($item)->toarray();
                 }
                 $array[$field] = $item;
+                // JSON数据处理
+                if (!empty($this->options['json'])) {
+                    $this->jsonModelResult($array);
+                }
                 return $this->model->newInstance($array)->getAttr($field);
             }, $result);
         }
