@@ -133,6 +133,13 @@ trait Attribute
     private $withAttr = [];
 
     /**
+     * 自动写入字段.
+     *
+     * @var array
+     */    
+    protected $autoInsertFields = [];
+
+    /**
      * 获取模型对象的主键.
      *
      * @return string|array
