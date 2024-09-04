@@ -288,9 +288,16 @@ trait WhereQuery
             [$field1, $field2] = explode('->', $field);
             $field             = 'json_extract(' . $field1 . ',\'$.' . $field2 . '\')';
         }
-        
-        $value = is_string($condition) ? '"' . $condition . '"' : $condition;
-        return $this->whereRaw('json_contains(' . $field . ',\'' . $value . '\')');
+
+        $value       = is_string($condition) ? '"' . $condition . '"' : $condition;
+        $name        = $this->bindValue($value);
+        $bind[$name] = $value;
+        return $this->whereRaw('json_contains(' . $field . ',:' . $name . ')', $bind, $logic);
+    }
+
+    public function whereOrJsonContains(string $field, $condition)
+    {
+        return $this->whereJsonContains($field, $condition, 'OR');
     }
 
     /**
