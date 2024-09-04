@@ -780,8 +780,8 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
         }
 
         // 自动（使用修改器）写入字段
-        if (!empty($this->autoInsertFields)) {
-            foreach ($this->autoInsertFields as $field) {
+        if (!empty($this->insert)) {
+            foreach ($this->insert as $field) {
                 if (!isset($this->data[$field])) {
                     $this->setAttr($field, null);
                 }

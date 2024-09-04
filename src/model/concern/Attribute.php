@@ -137,7 +137,7 @@ trait Attribute
      *
      * @var array
      */
-    protected $autoInsertFields = [];
+    protected $insert = [];
 
     /**
      * 获取模型对象的主键.
