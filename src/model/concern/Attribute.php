@@ -13,6 +13,7 @@ declare (strict_types = 1);
 
 namespace think\model\concern;
 
+use BackedEnum;
 use Closure;
 use InvalidArgumentException;
 use Stringable;
@@ -468,7 +469,9 @@ trait Attribute
 
         $typeTransform = static function (string $type, $value, $model) {
             if (str_contains($type, '\\') && class_exists($type)) {
-                if (is_subclass_of($type, FieldTypeTransform::class)) {
+                if ($value instanceof BackedEnum) {
+                    $value = $value->value;
+                } elseif (is_subclass_of($type, FieldTypeTransform::class)) {
                     $value = $type::set($value, $model);
                 } elseif ($value instanceof Stringable) {
                     $value = $value->__toString();
@@ -641,7 +644,9 @@ trait Attribute
 
         $typeTransform = static function (string $type, $value, $model) {
             if (str_contains($type, '\\') && class_exists($type)) {
-                if (is_subclass_of($type, FieldTypeTransform::class)) {
+                if (is_subclass_of($type, BackedEnum::class)) {
+                    $value = $type::from($value);
+                } elseif (is_subclass_of($type, FieldTypeTransform::class)) {
                     $value = $type::get($value, $model);
                 } else {
                     // 对象类型
