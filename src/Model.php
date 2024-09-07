@@ -410,7 +410,7 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
         }
 
         if (!empty($this->table)) {
-            $query->table($this->table);
+            $query->table($this->table . $this->suffix);
         } elseif (!empty($this->suffix)) {
             $query->suffix($this->suffix);
         }
