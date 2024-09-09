@@ -470,10 +470,10 @@ trait Attribute
 
         $typeTransform = static function (string $type, $value, $model) {
             if (str_contains($type, '\\') && class_exists($type)) {
-                if ($value instanceof BackedEnum) {
-                    $value = $value->value;
-                } elseif (is_subclass_of($type, FieldTypeTransform::class)) {
+                if (is_subclass_of($type, FieldTypeTransform::class)) {
                     $value = $type::set($value, $model);
+                } elseif ($value instanceof BackedEnum) {
+                    $value = $value->value;
                 } elseif ($value instanceof Stringable) {
                     $value = $value->__toString();
                 }
@@ -645,13 +645,13 @@ trait Attribute
 
         $typeTransform = static function (string $type, $value, $model) {
             if (str_contains($type, '\\') && class_exists($type)) {
-                if (is_subclass_of($type, BackedEnum::class)) {
+                if (is_subclass_of($type, FieldTypeTransform::class)) {
+                    $value = $type::get($value, $model);
+                } elseif (is_subclass_of($type, BackedEnum::class)) {
                     $value = $type::from($value);
                     if (is_subclass_of($type, EnumTransform::class)) {
                         $value = $value->value();
                     }
-                } elseif (is_subclass_of($type, FieldTypeTransform::class)) {
-                    $value = $type::get($value, $model);
                 } else {
                     // 对象类型
                     $value = new $type($value);
