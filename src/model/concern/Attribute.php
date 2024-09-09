@@ -470,7 +470,7 @@ trait Attribute
         $typeTransform = static function (string $type, $value, $model) {
             if (str_contains($type, '\\') && class_exists($type)) {
                 if ($value instanceof BackedEnum) {
-                    $value = $value->value;
+                    $value = method_exists($value, 'set') ? $value->set() : $value->value;
                 } elseif (is_subclass_of($type, FieldTypeTransform::class)) {
                     $value = $type::set($value, $model);
                 } elseif ($value instanceof Stringable) {
@@ -646,6 +646,9 @@ trait Attribute
             if (str_contains($type, '\\') && class_exists($type)) {
                 if (is_subclass_of($type, BackedEnum::class)) {
                     $value = $type::from($value);
+                    if (method_exists($value, 'get')) {
+                        $value = $value->get();
+                    }
                 } elseif (is_subclass_of($type, FieldTypeTransform::class)) {
                     $value = $type::get($value, $model);
                 } else {
