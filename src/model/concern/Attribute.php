@@ -668,7 +668,7 @@ trait Attribute
                     $value = $type::from($value);
                     if (is_subclass_of($type, EnumTransform::class)) {
                         $value = $value->value();
-                    } elseif ($this->enumReadName) {
+                    } elseif ($model->enumReadName) {
                         $value = $value->name;
                     }
                 } else {
