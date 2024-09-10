@@ -114,6 +114,13 @@ trait Attribute
     protected $jsonAssoc = false;
 
     /**
+     * Enum数据取出自动转换为name.
+     *
+     * @var bool
+     */
+    protected $enumReadName = false;
+
+    /**
      * 是否严格字段大小写.
      *
      * @var bool
@@ -651,6 +658,8 @@ trait Attribute
                     $value = $type::from($value);
                     if (is_subclass_of($type, EnumTransform::class)) {
                         $value = $value->value();
+                    } elseif ($this->enumReadName) {
+                        $value = $value->name;
                     }
                 } else {
                     // 对象类型
