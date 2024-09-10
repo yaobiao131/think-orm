@@ -121,6 +121,13 @@ trait Attribute
     protected $enumReadName = false;
 
     /**
+     * 严格检查Enum数据类型.
+     *
+     * @var bool
+     */
+    protected $enumStrict = false;
+
+    /**
      * 是否严格字段大小写.
      *
      * @var bool
@@ -436,6 +443,9 @@ trait Attribute
             }
         } elseif (!in_array($name, $this->json) && isset($this->type[$name])) {
             // 类型转换
+            if ($this->enumStrict && is_subclass_of($this->type[$name], BackedEnum::class) && !($value instanceof BackedEnum)) {
+                throw new InvalidArgumentException('data type error: ' . $name . ' => ' . $this->type[$name]);
+            }
             $value = $this->writeTransform($value, $this->type[$name]);
         } elseif ($this->isRelationAttr($name)) {
             // 关联属性
