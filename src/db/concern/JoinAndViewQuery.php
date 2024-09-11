@@ -82,7 +82,7 @@ trait JoinAndViewQuery
      */
     public function fullJoin(array | string | Raw $join, string $condition = null, array $bind = [])
     {
-        return $this->join($join, $condition, 'FULL');
+        return $this->join($join, $condition, 'FULL', $bind);
     }
 
     /**
