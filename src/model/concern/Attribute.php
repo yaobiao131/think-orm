@@ -323,7 +323,7 @@ trait Attribute
      *
      * @return mixed
      */
-    public function getOrigin(string $name = null)
+    public function getOrigin(?string $name = null)
     {
         if (is_null($name)) {
             return $this->origin;
@@ -343,7 +343,7 @@ trait Attribute
      *
      * @return mixed
      */
-    public function getData(string $name = null)
+    public function getData(?string $name = null)
     {
         if (is_null($name)) {
             return $this->data;
@@ -704,7 +704,7 @@ trait Attribute
      *
      * @return $this
      */
-    public function withFieldAttr(string | array $name, Closure $callback = null)
+    public function withFieldAttr(string | array $name, ?Closure $callback = null)
     {
         if (is_array($name)) {
             foreach ($name as $key => $val) {

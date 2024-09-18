@@ -599,7 +599,7 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
      *
      * @return bool
      */
-    public function save(array | object $data = [], string $sequence = null): bool
+    public function save(array | object $data = [], ?string $sequence = null): bool
     {
         if ($data instanceof Model) {
             $data = $data->getData();
@@ -754,7 +754,7 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
      *
      * @return bool
      */
-    protected function insertData(string $sequence = null): bool
+    protected function insertData(?string $sequence = null): bool
     {
         if (false === $this->trigger('BeforeInsert')) {
             return false;
@@ -1115,7 +1115,7 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
      *
      * @return Query
      */
-    public static function withoutGlobalScope(array $scope = null): Query
+    public static function withoutGlobalScope(?array $scope = null): Query
     {
         $model = new static();
 
