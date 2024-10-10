@@ -712,6 +712,7 @@ trait Attribute
             }
         } else {
             $name = $this->getRealFieldName($name);
+            $this->append([$name], true);
 
             if (str_contains($name, '.')) {
                 [$name, $key] = explode('.', $name);
@@ -719,7 +720,6 @@ trait Attribute
                 $this->withAttr[$name][$key] = $callback;
             } else {
                 $this->withAttr[$name] = $callback;
-                $this->append([$name], true);
             }
         }
 
