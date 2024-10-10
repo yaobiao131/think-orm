@@ -567,7 +567,7 @@ trait Attribute
             } else {
                 $closure = $this->withAttr[$fieldName];
                 if ($closure instanceof \Closure) {
-                    $value = $closure($value, $this->data);
+                    $value = $closure($value, $this->data, $this);
                 }
             }
         } elseif (method_exists($this, $method)) {
@@ -719,6 +719,7 @@ trait Attribute
                 $this->withAttr[$name][$key] = $callback;
             } else {
                 $this->withAttr[$name] = $callback;
+                $this->append([$name], true);
             }
         }
 
@@ -726,16 +727,16 @@ trait Attribute
     }
 
     /**
-     * 设置枚举类型自动读取数据方式 
+     * 设置枚举类型自动读取数据方式
      * true 表示使用name值返回
      * 字符串 表示使用枚举类的方法返回
      *
      * @return $this
      */
-    public function withEnumRead(bool|string $method = true)
+    public function withEnumRead(bool | string $method = true)
     {
         $this->enumReadName = $method;
 
         return $this;
-    }    
+    }
 }
