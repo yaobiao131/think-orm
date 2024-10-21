@@ -375,7 +375,9 @@ abstract class BaseQuery
             return $this->model->newInstance($array)->getAttr($field);
         }
 
-        $this->result($array);
+        if (!empty($this->options['json'])) {
+            $this->jsonResult($array);
+        }
         return $array[$field];
     }
 
@@ -413,7 +415,9 @@ abstract class BaseQuery
                     }
                     return $this->model->newInstance($item)->toArray();
                 }
-                $this->result($item);
+                if (!empty($this->options['json'])) {
+                    $this->jsonResult($item);
+                }
                 return $item;
             }
 
@@ -428,7 +432,9 @@ abstract class BaseQuery
                 }
                 return $this->model->newInstance($array)->getAttr($field);
             }
-            $this->result($array);
+            if (!empty($this->options['json'])) {
+                $this->jsonResult($array);
+            }
             return $array[$field];
         }, $result);
     }
