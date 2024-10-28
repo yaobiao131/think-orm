@@ -16,6 +16,7 @@ use Closure;
 use think\Collection;
 use think\db\BaseQuery as Query;
 use think\db\exception\DbException as Exception;
+use think\db\exception\InvalidArgumentException;
 use think\db\Raw;
 use think\Model;
 use think\model\Pivot;
@@ -53,7 +54,7 @@ class BelongsToMany extends Relation
      * @var string
      */
     protected $pivotDataName = 'pivot';
-    
+
     /**
      * 绑定的关联属性.
      *
