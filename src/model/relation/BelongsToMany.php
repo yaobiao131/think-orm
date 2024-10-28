@@ -53,6 +53,13 @@ class BelongsToMany extends Relation
      * @var string
      */
     protected $pivotDataName = 'pivot';
+    
+    /**
+     * 绑定的关联属性.
+     *
+     * @var array
+     */
+    protected $bindAttr = [];
 
     /**
      * 架构函数.
@@ -177,7 +184,61 @@ class BelongsToMany extends Relation
 
         $result->setRelation($this->pivotDataName, $pivotData);
 
+        if (!empty($this->bindAttr)) {
+            // 绑定关联属性
+            $this->bindAttr($result, $pivotData);
+        }
+
         return $pivot;
+    }
+
+    /**
+     * 绑定关联表的属性到父模型属性.
+     *
+     * @param array $attr 要绑定的属性列表
+     *
+     * @return $this
+     */
+    public function bind(array $attr)
+    {
+        $this->bindAttr = $attr;
+
+        return $this;
+    }
+
+    /**
+     * 绑定关联属性到父模型.
+     *
+     * @param Model $result 父模型对象
+     * @param Model $model  关联模型对象
+     *
+     * @throws Exception
+     *
+     * @return void
+     */
+    protected function bindAttr(Model $result, ?Model $model = null): void
+    {
+        foreach ($this->bindAttr as $key => $attr) {
+            if (is_numeric($key)) {
+                if (!is_string($attr)) {
+                    throw new InvalidArgumentException('bind attr must be string:' . $key);
+                }
+
+                $key = $attr;
+            }
+
+            if (null !== $result->getOrigin($key)) {
+                throw new Exception('bind attr has exists:' . $key);
+            }
+
+            if ($attr instanceof Closure) {
+                $value = $attr($model, $key, $result);
+            } else {
+                $value = $model?->getAttr($attr);
+            }
+
+            $result->setAttr($key, $value);
+        }
     }
 
     /**
