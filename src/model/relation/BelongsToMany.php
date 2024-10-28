@@ -192,10 +192,10 @@ class BelongsToMany extends Relation
                 if ('pivot' == $name) {
                     $pivot[$attr] = $val;
                     if (isset($bindAttr[$attr])) {
-                        $attr          = $bindAttr[$attr];
-                        $result->$attr = $val;
-                    } elseif (array_search($attr, $bindAttr)) {
-                        $result->$attr = $val;
+                        $attr = $bindAttr[$attr];
+                        $result->setAttr($attr, $val);
+                    } elseif (false !== array_search($attr, $bindAttr)) {
+                        $result->setAttr($attr, $val);
                     }
                     unset($result->$key);
                 }
