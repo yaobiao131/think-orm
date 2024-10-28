@@ -191,10 +191,13 @@ class BelongsToMany extends Relation
 
                 if ('pivot' == $name) {
                     $pivot[$attr] = $val;
-                    if (isset($bindAttr[$attr])) {
-                        $attr = $bindAttr[$attr];
-                        $result->setAttr($attr, $val);
-                    } elseif (false !== array_search($attr, $bindAttr)) {
+                    $pos          = array_search($attr, $bindAttr);
+                    if (false !== $pos) {
+                        // 中间表属性绑定
+                        $attr = !is_numeric($pos) ? $pos : $attr;
+                        if (null !== $result->getOrigin($attr)) {
+                            throw new Exception('bind attr has exists:' . $attr);
+                        }
                         $result->setAttr($attr, $val);
                     }
                     unset($result->$key);
