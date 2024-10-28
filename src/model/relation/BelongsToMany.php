@@ -16,7 +16,6 @@ use Closure;
 use think\Collection;
 use think\db\BaseQuery as Query;
 use think\db\exception\DbException as Exception;
-use think\db\exception\InvalidArgumentException;
 use think\db\Raw;
 use think\Model;
 use think\model\Pivot;
@@ -118,6 +117,20 @@ class BelongsToMany extends Relation
     }
 
     /**
+     * 绑定关联表的属性到父模型属性.
+     *
+     * @param array $attr 要绑定的属性列表
+     *
+     * @return $this
+     */
+    public function bind(array $attr)
+    {
+        $this->bindAttr = $attr;
+
+        return $this;
+    }
+
+    /**
      * 实例化中间表模型.
      *
      * @param $data
@@ -166,13 +179,24 @@ class BelongsToMany extends Relation
      */
     protected function matchPivot(Model $result): array
     {
-        $pivot = [];
+        $pivot    = [];
+        $bindAttr = $this->query->getOptions('bind_attr');
+        if (empty($bindAttr)) {
+            $bindAttr = $this->bindAttr;
+        }
+
         foreach ($result->getData() as $key => $val) {
             if (str_contains($key, '__')) {
                 [$name, $attr] = explode('__', $key, 2);
 
                 if ('pivot' == $name) {
                     $pivot[$attr] = $val;
+                    if (isset($bindAttr[$attr])) {
+                        $attr          = $bindAttr[$attr];
+                        $result->$attr = $val;
+                    } elseif (array_search($attr, $bindAttr)) {
+                        $result->$attr = $val;
+                    }
                     unset($result->$key);
                 }
             }
@@ -185,61 +209,7 @@ class BelongsToMany extends Relation
 
         $result->setRelation($this->pivotDataName, $pivotData);
 
-        if (!empty($this->bindAttr)) {
-            // 绑定关联属性
-            $this->bindAttr($result, $pivotData);
-        }
-
         return $pivot;
-    }
-
-    /**
-     * 绑定关联表的属性到父模型属性.
-     *
-     * @param array $attr 要绑定的属性列表
-     *
-     * @return $this
-     */
-    public function bind(array $attr)
-    {
-        $this->bindAttr = $attr;
-
-        return $this;
-    }
-
-    /**
-     * 绑定关联属性到父模型.
-     *
-     * @param Model $result 父模型对象
-     * @param Model $model  关联模型对象
-     *
-     * @throws Exception
-     *
-     * @return void
-     */
-    protected function bindAttr(Model $result, ?Model $model = null): void
-    {
-        foreach ($this->bindAttr as $key => $attr) {
-            if (is_numeric($key)) {
-                if (!is_string($attr)) {
-                    throw new InvalidArgumentException('bind attr must be string:' . $key);
-                }
-
-                $key = $attr;
-            }
-
-            if (null !== $result->getOrigin($key)) {
-                throw new Exception('bind attr has exists:' . $key);
-            }
-
-            if ($attr instanceof Closure) {
-                $value = $attr($model, $key, $result);
-            } else {
-                $value = $model?->getAttr($attr);
-            }
-
-            $result->setAttr($key, $value);
-        }
     }
 
     /**
