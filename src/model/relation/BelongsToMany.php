@@ -384,7 +384,7 @@ class BelongsToMany extends Relation
 
         return $this->belongsToManyQuery($this->foreignKey, $this->localKey, [
             [
-                'pivot.' . $this->localKey, 'exp', new Raw('=' . $this->parent->db(false)->getTable() . '.' . $this->parent->getPk()),
+                'pivot.' . $this->localKey, 'exp', new Raw('=' . $this->parent->db(false)->getTable(true) . '.' . $this->parent->getPk()),
             ],
         ])->fetchSql()->$aggregate($field);
     }
@@ -445,7 +445,7 @@ class BelongsToMany extends Relation
     {
         // 关联查询封装
         if (empty($this->baseQuery)) {
-            $tableName = $this->query->getTable();
+            $tableName = $this->query->getTable(true);
             $table = $this->pivot->db()->getTable();
             $fields = $this->getQueryFields($tableName);
 
@@ -679,7 +679,7 @@ class BelongsToMany extends Relation
 
             // 关联查询
             if (null === $this->parent->getKey()) {
-                $condition = ['pivot.' . $localKey, 'exp', new Raw('=' . $this->parent->getTable() . '.' . $this->parent->getPk())];
+                $condition = ['pivot.' . $localKey, 'exp', new Raw('=' . $this->parent->getTable(true) . '.' . $this->parent->getPk())];
             } else {
                 $condition = ['pivot.' . $localKey, '=', $this->parent->getKey()];
             }
