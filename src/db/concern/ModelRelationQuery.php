@@ -62,7 +62,7 @@ trait ModelRelationQuery
      *
      * @return $this
      */
-    public function hidden(array $hidden = [], bool $merge = false)
+    public function hidden(array $hidden, bool $merge = false)
     {
         $this->options['hidden'] = [$hidden, $merge];
 
@@ -77,7 +77,7 @@ trait ModelRelationQuery
      *
      * @return $this
      */
-    public function visible(array $visible = [], bool $merge = false)
+    public function visible(array $visible, bool $merge = false)
     {
         $this->options['visible'] = [$visible, $merge];
 
@@ -92,7 +92,7 @@ trait ModelRelationQuery
      *
      * @return $this
      */
-    public function append(array $append = [], bool $merge = false)
+    public function append(array $append, bool $merge = false)
     {
         $this->options['append'] = [$append, $merge];
 
