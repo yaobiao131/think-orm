@@ -48,14 +48,10 @@ trait WhereQuery
         $param = func_get_args();
         array_shift($param);
 
-        if (is_array($field) && is_array($field[0])) {
-            $where = function($query) use($field) {
-                foreach($field as $item) {
-                    $query->where($item[0], $item[1], $item[2]);
-                }
-            };
-            $logic = is_string($op) && 'or' == strtolower($op) ? 'OR' : 'AND';
-            return $this->parseWhereExp($logic, $where, null, null);
+        if (is_array($field)) {
+            return $this->where(function ($query) use ($param, $condition, $op, $field) {
+                return $query->parseWhereExp('AND', $field, $op, $condition, $param);
+            });
         }
         return $this->parseWhereExp('AND', $field, $op, $condition, $param);
     }
@@ -100,14 +96,10 @@ trait WhereQuery
         $param = func_get_args();
         array_shift($param);
 
-        if (is_array($field) && is_array($field[0])) {
-            $where = function($query) use($field) {
-                foreach($field as $item) {
-                    $query->whereOr($item[0], $item[1], $item[2]);
-                }
-            };
-            $logic = is_string($op) && 'or' == strtolower($op) ? 'OR' : 'AND';
-            return $this->parseWhereExp($logic, $where, null, null);
+        if (is_array($field)) {
+            return $this->where(function ($query) use ($param, $condition, $op, $field) {
+                return $query->parseWhereExp('OR', $field, $op, $condition, $param);
+            });
         }
 
         return $this->parseWhereExp('OR', $field, $op, $condition, $param);
