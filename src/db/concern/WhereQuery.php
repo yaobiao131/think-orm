@@ -119,6 +119,11 @@ trait WhereQuery
         $param = func_get_args();
         array_shift($param);
 
+        if (is_array($field)) {
+            return $this->where(function ($query) use ($param, $condition, $op, $field) {
+                return $query->parseWhereExp('XOR', $field, $op, $condition, $param);
+            });
+        }
         return $this->parseWhereExp('XOR', $field, $op, $condition, $param);
     }
 
