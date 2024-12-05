@@ -38,6 +38,8 @@ trait WhereQuery
             $this->options['where']['AND'][] = true;
 
             return $this;
+        } elseif (empty($field)) {
+            return $this;
         }
 
         $pk = $this->getPk();
@@ -96,7 +98,7 @@ trait WhereQuery
         $param = func_get_args();
         array_shift($param);
 
-        if (is_array($field)) {
+        if (is_array($field) && !empty($field)) {
             return $this->where(function ($query) use ($param, $condition, $op, $field) {
                 return $query->parseWhereExp('OR', $field, $op, $condition, $param);
             });
@@ -119,7 +121,7 @@ trait WhereQuery
         $param = func_get_args();
         array_shift($param);
 
-        if (is_array($field)) {
+        if (is_array($field) && !empty($field)) {
             return $this->where(function ($query) use ($param, $condition, $op, $field) {
                 return $query->parseWhereExp('XOR', $field, $op, $condition, $param);
             });
