@@ -1442,13 +1442,13 @@ abstract class BaseQuery
      * 查找单条记录.
      *
      * @param mixed   $data 主键数据
-     * @param Closure $closure 闭包数据
+     * @param ?Closure $closure 闭包数据
      *
      * @throws Exception
      * @throws ModelNotFoundException
      * @throws DataNotFoundException
      *
-     * @return mixed
+     * @return static|\think\Model|array|null
      */
     public function find($data = null, ?Closure $closure = null)
     {
