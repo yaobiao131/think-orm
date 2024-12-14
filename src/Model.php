@@ -23,7 +23,7 @@ use think\db\BaseQuery as Query;
 /**
  * Class Model.
  *
- * @mixin Query
+ * @mixin \think\db\Query
  *
  * @method static void  onAfterRead(Model $model)     after_read事件定义
  * @method static mixed onBeforeInsert(Model $model)  before_insert事件定义
