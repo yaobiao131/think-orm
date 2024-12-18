@@ -534,9 +534,9 @@ trait Attribute
     {
         try {
             $relation = false;
-            if (isset($this->mapping[$name])) {
-                // 检查字段映射
-                $name  = $this->mapping[$name];
+            $key = array_search($name, $this->mapping);
+            if (is_string($key)) {
+                $name = $key;
             }
             $value    = $this->getData($name);
         } catch (InvalidArgumentException $e) {
